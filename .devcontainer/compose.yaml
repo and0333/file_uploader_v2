@@ -2,6 +2,8 @@ name: "file_uploader_v2"
 
 services:
   rails-app:
+    ports:
+      - "3000:3000"
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
