@@ -25,7 +25,7 @@
         <strong><%= document.name %></strong>
         <small>(<%= document.created_at.strftime("%d.%m.%Y %H:%M") %>)</small>
         <% if document.file.attached? %>
-          <em> — файл прикреплён</em>
+          <%= link_to "Скачать файл: #{document.name}", document_path(document)%>
         <% end %>
       </li>
     <% end %>

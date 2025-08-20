@@ -17,6 +17,17 @@ class DocumentsController < ApplicationController
       redirect_to documents_path, alert: 'Ошибка загрузки файла'
     end
   end
+  def show
+    @document = Document.find(params[:id])
+    unless @document.file.attached?
+      redirect_to documents_path, alert: 'Файл не найден'
+      return
+    end
+    send_data @document.file.download,
+              filename: @document.file.filename.to_s,
+              type: @document.file.content_type,
+              disposition: 'attachment'
+  end
   private
   def document_params
     params.require(:document).permit(:name, :file)
