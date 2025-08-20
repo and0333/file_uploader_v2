@@ -1,0 +1,27 @@
+
+<h1>Загрузить новый документ</h1>
+
+<%= form_with model: @document, local: true do |form| %>
+  <% if @document.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@document.errors.count, "error") %></h2>
+      <ul>
+        <% @document.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="field">
+    <%= form.label :name, "Название документа:" %>
+    <%= form.text_field :name, required: true %>
+  </div>
+  <div class="field">
+    <%= form.label :file, "Выберите файл:" %>
+    <%= form.file_field :file, required: true %>
+  </div>
+  <div class="actions">
+    <%= form.submit "Загрузить документ" %>
+  </div>
+<% end %>
+<%= link_to 'Назад к списку', documents_path %>

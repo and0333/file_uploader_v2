@@ -1,11 +1,32 @@
 <h1>Список документов</h1>
+<!--<%= link_to 'Загрузить новый документ можно через форму отдельную', new_document_path, class: 'btn btn-primary' %> -->
+<div style="border: 1px solid #ccc; padding: 20px; margin-bottom: 20px;">
+  <h3>Загрузить файл</h3>
+  <%= form_with model: @document, local: true do |form| %>
+    <div class="field">
+      <%= form.label :name, "Название документа (необязательно):" %>
+      <%= form.text_field :name, placeholder: "Автоматически из имени файла" %>
+    </div>
 
+    <div class="field">
+      <%= form.label :file, "Выберите файл:" %>
+      <%= form.file_field :file, required: true %>
+    </div>
+
+    <div class="actions">
+      <%= form.submit "Загрузить документ" %>
+    </div>
+  <% end %>
+</div>
 <% if @documents.any? %>
   <ul>
     <% @documents.each do |document| %>
       <li>
         <strong><%= document.name %></strong>
         <small>(<%= document.created_at.strftime("%d.%m.%Y %H:%M") %>)</small>
+        <% if document.file.attached? %>
+          <em> — файл прикреплён</em>
+        <% end %>
       </li>
     <% end %>
   </ul>

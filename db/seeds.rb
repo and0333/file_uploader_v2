@@ -7,7 +7,7 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
-#небольшой комментик, я пропробовал выполнить несколько раз bin/rails db:seed ради интереса и напродил целую тучу файлов, поэтому и добавил destroy_all
+#небольшой комментик, я пропробовал выполнить несколько раз bin/rails db:seed ради интереса и наплодил целую тучу файлов, поэтому и добавил destroy_all
 #Document.destroy_all
 Document.create!(name: "Первый документ")
 Document.create!(name: "Второй документ")
