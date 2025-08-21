@@ -2,14 +2,22 @@
   <% if documents&.any? %>
     <ul>
       <% documents.each do |document| %>
-        <li>
+        <li id="document_<%= document.id %>">
           <strong><%= document.name %></strong>
           <small>(<%= document.created_at.strftime("%d.%m.%Y %H:%M") %>)</small>
           <% if document.file.attached? %>
-            <%= link_to "Скачать файл: #{document.name}",
+            — <%= link_to "Скачать файл: #{document.name}",
                         document_path(document),
                         data: { turbo_frame: "_top" } %>
           <% end %>
+          — <%= link_to "Удалить",
+                        document_path(document),
+                        method: :delete,
+                        data: {
+                          turbo_method: :delete,
+                          turbo_confirm: "Вы уверены, что хотите удалить этот документ?"
+                        },
+                        class: "delete-link" %>
         </li>
       <% end %>
     </ul>

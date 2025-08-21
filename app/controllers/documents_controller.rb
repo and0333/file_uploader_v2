@@ -49,6 +49,17 @@ class DocumentsController < ApplicationController
               type: @document.file.content_type,
               disposition: 'attachment'
   end
+  def destroy
+    @document = Document.find(params[:id])
+    document_id = @document.id
+    @document.destroy
+    respond_to do |format|
+      format.html { redirect_to documents_path, notice: 'Документ удалён!' }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.remove("document_#{document_id}")
+      end
+    end
+  end
   private
   def document_params
     params.require(:document).permit(:name, :file)
