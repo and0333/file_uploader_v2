@@ -1,0 +1,20 @@
+<turbo-frame id="upload-form">
+  <div style="border: 1px solid #ccc; padding: 20px; margin-bottom: 20px;">
+    <h3>Загрузить файл</h3>
+    <%= form_with model: document, local: false do |form| %>
+      <div class="field">
+        <%= form.label :name, "Название документа (необязательно):" %>
+        <%= form.text_field :name, placeholder: "Автоматически из имени файла" %>
+      </div>
+
+      <div class="field">
+        <%= form.label :file, "Выберите файл:" %>
+        <%= form.file_field :file, required: true %>
+      </div>
+
+      <div class="actions">
+        <%= form.submit "Загрузить документ" %>
+      </div>
+    <% end %>
+  </div>
+</turbo-frame>

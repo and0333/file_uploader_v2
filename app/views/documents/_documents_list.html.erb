@@ -1,0 +1,19 @@
+<turbo-frame id="documents-list">
+  <% if documents&.any? %>
+    <ul>
+      <% documents.each do |document| %>
+        <li>
+          <strong><%= document.name %></strong>
+          <small>(<%= document.created_at.strftime("%d.%m.%Y %H:%M") %>)</small>
+          <% if document.file.attached? %>
+            <%= link_to "Скачать файл: #{document.name}",
+                        document_path(document),
+                        data: { turbo_frame: "_top" } %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>Документов пока нет.</p>
+  <% end %>
+</turbo-frame>

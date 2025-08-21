@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :documents, only: [:index, :new, :create, :show]
+  resources :documents, only: [:index, :create, :show]
   root 'documents#index'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

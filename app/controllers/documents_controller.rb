@@ -12,9 +12,30 @@ class DocumentsController < ApplicationController
       @document.name = @document.file.filename.to_s
     end
     if @document.save
-      redirect_to documents_path, notice: 'Документ успешно загружен!'
+      @documents = Document.order(created_at: :desc)
+      respond_to do |format|
+        format.html { redirect_to documents_path, notice: 'Документ успешно загружен!' }
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace("documents-list",
+                                 partial: "documents_list",
+                                 locals: { documents: @documents }),
+            turbo_stream.replace("upload-form",
+                                 partial: "upload_form",
+                                 locals: { document: Document.new })
+          ]
+        end
+      end
     else
-      redirect_to documents_path, alert: 'Ошибка загрузки файла'
+      @documents = Document.order(created_at: :desc)
+      respond_to do |format|
+        format.html { redirect_to documents_path, alert: 'Ошибка загрузки файла' }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("upload-form",
+                                                    partial: "upload_form",
+                                                    locals: { document: Document.new })
+        end
+      end
     end
   end
   def show
