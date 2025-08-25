@@ -1,7 +1,7 @@
 <turbo-frame id="upload-form">
   <div style="border: 1px solid #ccc; padding: 20px; margin-bottom: 20px;">
     <h3>Загрузить файл</h3>
-    <%= form_with model: document, local: false do |form| %>
+    <%= form_with model: document, local: false, html: { id: "upload-form-element" } do |form| %>
       <div class="field">
         <%= form.label :name, "Название документа (необязательно):" %>
         <%= form.text_field :name, placeholder: "Автоматически из имени файла" %>
@@ -11,9 +11,19 @@
         <%= form.label :file, "Выберите файл:" %>
         <%= form.file_field :file, required: true %>
       </div>
+      <!-- Progress bar -->
+      <div id="upload-progress" style="display: none; margin: 10px 0;">
+        <div style="margin-bottom: 5px;">
+          <span id="progress-text">Загрузка: 0%</span>
+        </div>
+        <div style="width: 100%; background-color: #f0f0f0; border-radius: 5px;">
+          <div id="progress-bar" style="height: 20px; background-color: #007bff; width: 0%;"></div>
+        </div>
+      </div>
+
 
       <div class="actions">
-        <%= form.submit "Загрузить документ" %>
+        <%= form.submit "Загрузить документ", id: "submit-button" %>
       </div>
     <% end %>
   </div>

@@ -7,8 +7,8 @@
           <small>(<%= document.created_at.strftime("%d.%m.%Y %H:%M") %>)</small>
           <% if document.file.attached? %>
             — <%= link_to "Скачать файл: #{document.name}",
-                        document_path(document),
-                        data: { turbo_frame: "_top" } %>
+                          document_path(document),
+                          data: { turbo_frame: "_top" , turbo: false  } %>
           <% end %>
           — <%= link_to "Удалить",
                         document_path(document),
