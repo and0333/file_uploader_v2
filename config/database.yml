@@ -23,19 +23,46 @@ test:
 
 # Store production database in the storage/ directory, which by default
 # is mounted as a persistent Docker volume in config/deploy.yml.
+
+# PostgreSQL для production
 production:
   primary:
-    <<: *default
-    database: storage/production.sqlite3
+    adapter: postgresql
+    encoding: unicode
+    database: <%= ENV.fetch("DATABASE_NAME", "file_uploader_production") %>
+    username: <%= ENV.fetch("DATABASE_USER", "postgres") %>
+    password: <%= ENV.fetch("DATABASE_PASSWORD", "") %>
+    host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+    port: <%= ENV.fetch("DATABASE_PORT", "5432") %>
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS", "5") %>
+    prepared_statements: false
   cache:
-    <<: *default
-    database: storage/production_cache.sqlite3
+    adapter: postgresql
+    encoding: unicode
+    database: <%= ENV.fetch("DATABASE_NAME", "file_uploader_production") %>_cache
+    username: <%= ENV.fetch("DATABASE_USER", "postgres") %>
+    password: <%= ENV.fetch("DATABASE_PASSWORD", "") %>
+    host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+    port: <%= ENV.fetch("DATABASE_PORT", "5432") %>
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS", "5") %>
     migrations_paths: db/cache_migrate
   queue:
-    <<: *default
-    database: storage/production_queue.sqlite3
+    adapter: postgresql
+    encoding: unicode
+    database: <%= ENV.fetch("DATABASE_NAME", "file_uploader_production") %>_queue
+    username: <%= ENV.fetch("DATABASE_USER", "postgres") %>
+    password: <%= ENV.fetch("DATABASE_PASSWORD", "") %>
+    host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+    port: <%= ENV.fetch("DATABASE_PORT", "5432") %>
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS", "5") %>
     migrations_paths: db/queue_migrate
   cable:
-    <<: *default
-    database: storage/production_cable.sqlite3
+    adapter: postgresql
+    encoding: unicode
+    database: <%= ENV.fetch("DATABASE_NAME", "file_uploader_production") %>_cable
+    username: <%= ENV.fetch("DATABASE_USER", "postgres") %>
+    password: <%= ENV.fetch("DATABASE_PASSWORD", "") %>
+    host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+    port: <%= ENV.fetch("DATABASE_PORT", "5432") %>
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS", "5") %>
     migrations_paths: db/cable_migrate

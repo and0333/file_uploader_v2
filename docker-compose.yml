@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: file_uploader_db
+    environment:
+      POSTGRES_DB: file_uploader_production
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secure_pass
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: file_uploader_app
+    environment:
+      RAILS_ENV: production
+      DATABASE_HOST: db
+      DATABASE_NAME: file_uploader_production
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: secure_pass
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+    volumes:
+      - app_storage:/rails/storage
+      - app_logs:/rails/log
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ./bin/thrust ./bin/rails server -b 0.0.0.0 -p 3000
+
+volumes:
+  pg_data:
+  app_storage:
+  app_logs:

@@ -78,7 +78,8 @@ Rails.application.configure do
 
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
-
+  # Отключаем требование HTTPS Origin для CSRF
+  config.action_controller.forgery_protection_origin_check = false
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com
