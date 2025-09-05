@@ -43,6 +43,7 @@ Rails.application.configure do
   # Prevent health checks from clogging up the logs.
   config.silence_healthcheck_path = "/up"
 
+
   # Don't log any deprecations.
   config.active_support.report_deprecations = false
 
@@ -80,6 +81,9 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
   # Отключаем требование HTTPS Origin для CSRF
   config.action_controller.forgery_protection_origin_check = false
+  config.force_ssl = false
+  config.assume_ssl = false
+  config.action_controller.allow_forgery_protection = false
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com
