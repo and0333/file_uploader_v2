@@ -76,7 +76,12 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
-
+  #============================================================================
+  # Разрешить health check эндпоинт без SSL редиректов
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  # Разрешить health check эндпоинт без проверки хоста
+  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  #============================================================================
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
   # Отключаем требование HTTPS Origin для CSRF

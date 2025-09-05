@@ -21,9 +21,9 @@ services:
     container_name: file_uploader_app
     environment:
       RAILS_ENV: production
-      DATABASE_HOST: db
-      DATABASE_NAME: file_uploader_production
-      DATABASE_USER: postgres
+      DATABASE_HOST: file-uploader-v2-db
+      DATABASE_NAME: file_uploader_v2_production
+      DATABASE_USER: file_uploader_v2_user
       DATABASE_PASSWORD: secure_pass
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
     volumes:

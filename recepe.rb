@@ -3,18 +3,12 @@ Specinfra::Command::Astralinux::Base = Class.new(Specinfra::Command::Debian::Bas
 Specinfra::Command::Astralinux::Base::Ppa = Class.new(Specinfra::Command::Debian::Base::Ppa)
 Specinfra::Command::Astralinux::Base::Service = Class.new(Specinfra::Command::Debian::Base::Service)
 
-# ==========================================
-# 1. ОБНОВЛЕНИЕ СИСТЕМЫ
-# ==========================================
 
 execute 'update_system' do
   command 'apt-get update'
 end
 
 
-# ==========================================
-# 2. УСТАНОВКА БАЗОВЫХ ПАКЕТОВ
-# ==========================================
 
 %w[
   sudo
@@ -31,11 +25,6 @@ end
     action :install
   end
 end
-
-
-# ==========================================
-# 3. СОЗДАНИЕ И НАСТРОЙКА ПОЛЬЗОВАТЕЛЯ
-# ==========================================
 
 
 user 'ingipro' do
@@ -56,11 +45,6 @@ file '/etc/sudoers.d/ingipro' do
   owner 'root'
   group 'root'
 end
-
-
-# ==========================================
-# 4. SSH НАСТРОЙКА
-# ==========================================
 
 
 directory '/home/ingipro/.ssh' do
@@ -85,55 +69,46 @@ end
 service 'ssh' do
   action [:enable, :start]
 end
-# ==========================================
-# 5. НАСТРОЙКА IPTABLES (С DROP POLICY!)
-# ==========================================
 
-# ВАЖНО: Правильный порядок для безопасности!
-
-# 1. СНАЧАЛА разрешаем установленные соединения (критично!)
 execute "iptables_established" do
   command "iptables -I INPUT 1 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT"
   not_if "iptables -C INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 2>/dev/null"
 end
 
-# 2. Разрешаем loopback
+
 execute "iptables_loopback" do
   command "iptables -A INPUT -i lo -j ACCEPT"
   not_if "iptables -C INPUT -i lo -j ACCEPT 2>/dev/null"
 end
 
-# 3. Разрешаем SSH (КРИТИЧНО - наш порт!)
+
 execute "iptables_ssh" do
   command "iptables -A INPUT -p tcp --dport 22 -j ACCEPT"
   not_if "iptables -C INPUT -p tcp --dport 22 -j ACCEPT 2>/dev/null"
 end
 
-# 4. Разрешаем HTTP (для веб-приложения)
+
 execute "iptables_http" do
   command "iptables -A INPUT -p tcp --dport 80 -j ACCEPT"
   not_if "iptables -C INPUT -p tcp --dport 80 -j ACCEPT 2>/dev/null"
 end
 
 
-# 5. Разрешаем ICMP (ping)
 execute "iptables_icmp" do
   command "iptables -A INPUT -p icmp -j ACCEPT"
   not_if "iptables -C INPUT -p icmp -j ACCEPT 2>/dev/null"
 end
 
-# 6. ТОЛЬКО В САМОМ КОНЦЕ устанавливаем DROP policy
 execute "iptables_policy_drop" do
   command "iptables -P INPUT DROP && iptables -P FORWARD DROP"
   not_if "iptables -L | grep -q 'Chain INPUT (policy DROP)'"
 end
 
-# 7. Сохраняем правила
 execute "save_iptables" do
   command "iptables-save > /etc/iptables/rules.v4"
 end
 
-# Автозагрузка правил при загрузке системы
+
 file "/etc/network/if-pre-up.d/iptables-restore" do
   content <<-EOL
 #!/bin/sh
@@ -142,9 +117,6 @@ EOL
   mode "755"
 end
 
-# ==========================================
-# 6. УСТАНОВКА DOCKER
-# ==========================================
 
 execute 'install_docker' do
   command <<-EOL
@@ -174,20 +146,12 @@ execute 'create_docker_network_ingipro' do
   not_if 'docker network ls --format "{{.Name}}" | grep -q "^ingipro$"'
 end
 
-# ==========================================
-# 7. ПОДГОТОВКА ДИРЕКТОРИЙ ДЛЯ ПРИЛОЖЕНИЯ
-# ==========================================
-
-
 directory "/home/ingipro/storage" do
   action :create
   mode "0755"
   owner "ingipro"
   group "ingipro"
 end
-# ==========================================
-# 8. ФИНАЛЬНАЯ ПРОВЕРКА
-# ==========================================
 
 execute 'final_check' do
   command <<-EOL
