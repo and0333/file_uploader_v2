@@ -8,13 +8,13 @@ env:
     - RAILS_MASTER_KEY
     - DATABASE_PASSWORD
   clear:
-    RAILS_ENV: production
+    RAILS_ENV: "${RAILS_ENV}"
     RAILS_LOG_TO_STDOUT: true
     RAILS_SERVE_STATIC_FILES: true
-    DATABASE_HOST: file-uploader-v2-db
+    DATABASE_HOST: "${DATABASE_HOST}"
     DATABASE_PORT: 5432
-    DATABASE_NAME: file_uploader_v2_production
-    DATABASE_USER: file_uploader_v2_user
+    DATABASE_NAME: "${DATABASE_NAME}"
+    DATABASE_USER: "${DATABASE_USER}"
 
 servers:
   web:
@@ -48,8 +48,8 @@ accessories:
 
     env:
       clear:
-        POSTGRES_DB: "file_uploader_v2_production"
-        POSTGRES_USER: "file_uploader_v2_user"
+        POSTGRES_DB: "${DATABASE_NAME}"
+        POSTGRES_USER: "${DATABASE_USER}"
       secret:
         - POSTGRES_PASSWORD
     volumes:

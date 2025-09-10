@@ -1,0 +1,57 @@
+stages:
+  - build
+  - deploy
+
+services:
+  - docker:27-dind
+
+variables:
+  FF_NETWORK_PER_BUILD: "true"
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
+build:
+  stage: build
+  image: docker:27
+  before_script:
+    - docker login -u and0333 -p "${KAMAL_REGISTRY_PASSWORD}"
+  script:
+    - echo "Building image ${DOCKER_IMAGE}:${CI_COMMIT_SHA}"
+    - docker build -t "${DOCKER_IMAGE}:${CI_COMMIT_SHA}" -t "${DOCKER_IMAGE}:latest" .
+    - docker push "${DOCKER_IMAGE}:${CI_COMMIT_SHA}"
+    - docker push "${DOCKER_IMAGE}:latest"
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  image: ruby:3.4.5-slim
+  before_script:
+    - apt-get update -qq && apt-get install -y openssh-client git curl
+    - gem install kamal -v 2.3.0
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - mkdir -p .kamal
+    - echo "KAMAL_REGISTRY_USERNAME=and0333" > .kamal/secrets
+    - echo "KAMAL_REGISTRY_PASSWORD=${KAMAL_REGISTRY_PASSWORD}" >> .kamal/secrets
+    - echo "SECRET_KEY_BASE=${SECRET_KEY_BASE}" >> .kamal/secrets
+    - echo "RAILS_MASTER_KEY=${RAILS_MASTER_KEY}" >> .kamal/secrets
+    - echo "DATABASE_PASSWORD=${DATABASE_PASSWORD}" >> .kamal/secrets
+    - echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" >> .kamal/secrets
+    - chmod 600 .kamal/secrets
+  script:
+    - echo "Testing SSH connection..."
+    - ssh -o StrictHostKeyChecking=no -p 22022 ingipro@185.193.90.91 "echo 'SSH OK'"
+    - echo "Starting deployment..."
+    - kamal deploy -v
+  after_script:
+    - rm -f ~/.ssh/id_rsa .kamal/secrets
+  only:
+    - main
+
+
